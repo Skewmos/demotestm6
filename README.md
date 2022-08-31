@@ -1,70 +1,38 @@
-Symfony Demo Application
-========================
+## Installation
 
-The "Symfony Demo Application" is a reference application created to show how
-to develop applications following the [Symfony Best Practices][1].
+demotestm6 fonctionne avec docker il vous faudra donc vous munir de [docker](https://www.docker.com/)
 
-You can also learn about these practices in [the official Symfony Book][5].
+**Pour Windows :**
 
-Requirements
-------------
+Suivre les indications [suivantes](https://docs.docker.com/docker-for-windows/install/)
 
-  * PHP 8.1.0 or higher;
-  * PDO-SQLite PHP extension enabled;
-  * and the [usual Symfony application requirements][2].
-
-Installation
-------------
-
-[Download Symfony][4] to install the `symfony` binary on your computer and run
-this command:
+**Pour linux :**
 
 ```bash
-$ symfony new --demo my_project
+sudo apt update -y & sudo apt upgrade -y
+sudo apt-get install  curl apt-transport-https ca-certificates software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt update
+sudo apt install docker-ce
 ```
 
-Alternatively, you can use Composer:
+**Pour Mac :**
 
-```bash
-$ composer create-project symfony/symfony-demo my_project
-```
+Suivre les indications [suivantes](https://docs.docker.com/docker-for-mac/install/)
 
-If you want to test the demo without installing anything locally, you can also
-deploy it on Platform.sh, the official Symfony PaaS:
+# Mettre en place
 
-<p align="center">
-<a href="https://console.platform.sh/projects/create-project?template=https://raw.githubusercontent.com/symfonycorp/platformsh-symfony-template-metadata/main/template-metadata-demo.yaml&utm_content=symfonycorp&utm_source=github&utm_medium=button&utm_campaign=deploy_on_platform"><img src="https://platform.sh/images/deploy/lg-blue.svg" alt="Deploy on Platform.sh" width="180px" /></a>
-</p>
+**1. Cloner le repository**
 
-Usage
------
+`https://github.com/Skewmos/demotestm6.git  && cd demotestm6`
 
-There's no need to configure anything to run the application. If you have
-[installed Symfony][4] binary, run this command:
+**2. Construisez le conteneur**
 
-```bash
-$ cd my_project/
-$ symfony serve
-```
+`cd .docker && docker-compose up -d`
 
-Then access the application in your browser at the given URL (<https://localhost:8000> by default).
+**3. Installer les packages**
 
-If you don't have the Symfony binary installed, run `php -S localhost:8000 -t public/`
-to use the built-in PHP web server or [configure a web server][3] like Nginx or
-Apache to run the application.
+`docker exec -ti (nom ou id du container) bash`
 
-Tests
------
-
-Execute this command to run tests:
-
-```bash
-$ cd my_project/
-$ ./bin/phpunit
-```
-
-[1]: https://symfony.com/doc/current/best_practices.html
-[2]: https://symfony.com/doc/current/setup.html#technical-requirements
-[3]: https://symfony.com/doc/current/setup/web_server_configuration.html
-[4]: https://symfony.com/download
-[5]: https://symfony.com/book
+`composer install`
