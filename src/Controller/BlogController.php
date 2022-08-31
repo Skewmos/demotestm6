@@ -26,6 +26,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Controller used to manage blog contents in the public part of the site.
@@ -61,6 +62,19 @@ class BlogController extends AbstractController
             'paginator' => $latestPosts,
             'tagName' => $tag?->getName(),
         ]);
+    }
+
+    #[Route('/api/post', name: 'blog_api_index', methods: ['GET'])]
+    public function jsonPosts(PostRepository $postRepository, SerializerInterface $serializer)
+    {
+        $posts = $postRepository->findAll();
+
+        $json = $serializer->serialize($posts, 'json', ['groups' => 'post:read']);
+        return new Response($json, 200, [
+            'content-type' => "application/json",
+        ]);
+
+
     }
 
     /**
