@@ -1,5 +1,5 @@
-/public/build/fonts/glyphicons-*
-/public/build/images/glyphicons-*
+/www/public/build/fonts/glyphicons-*
+/www/public/build/images/glyphicons-*
 
 .php-version
 
@@ -7,9 +7,9 @@
 /.env.local
 /.env.local.php
 /.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
+/www/config/secrets/prod/prod.decrypt.private.php
+/www/public/bundles/
+/www/var/
 /vendor/
 ###< symfony/framework-bundle ###
 
@@ -22,3 +22,9 @@
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+.DS_Store
+
+var/
+
+.idea/

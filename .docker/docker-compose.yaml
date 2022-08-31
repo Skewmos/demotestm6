@@ -1,0 +1,71 @@
+version: '3.9'
+
+networks:
+  blog_m6_net:
+
+services:
+  nginx:
+    image: nginx
+    restart: always
+    ports:
+      - '${APP_PORT}:80'
+    volumes:
+      - ./nginx/sites:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx
+      - ../:/var/www/app
+    depends_on:
+      database_blog:
+        condition: service_healthy
+    networks:
+      - blog_m6_net
+
+  php:
+    build: php
+    restart: always
+    volumes:
+      - ../:/var/www/app
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+      - database_blog
+    networks:
+      - blog_m6_net
+
+  database_blog:
+    image: mariadb:10.5.9
+    container_name: '${APP_NAME}-database'
+    restart: always
+    ports:
+      - '${DB_PORT}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASS}'
+      MYSQL_DATABASE: '${MYSQL_DB}'
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
+      interval: 6s
+      retries: 5
+    networks:
+      - blog_m6_net
+
+  database_admin_blog:
+    image: phpmyadmin/phpmyadmin:5
+    container_name: '${APP_NAME}-database-admin'
+    ports:
+      - '${APP_DB_ADMIN_PORT}:80'
+    environment:
+      PMA_HOST: database_blog
+    depends_on:
+      database_blog:
+        condition: service_healthy
+    volumes:
+      - database_admin_blog_data:/var/www/html
+    networks:
+      - blog_m6_net
+
+volumes:
+  db_data:
+  database_admin_blog_data:
