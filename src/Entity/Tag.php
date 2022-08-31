@@ -12,6 +12,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Defines the properties of the Tag entity to represent the post tags.
@@ -27,9 +28,11 @@ class Tag implements \JsonSerializable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['post:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', unique: true)]
+    #[Groups(['post:read'])]
     private ?string $name = null;
 
     public function getId(): ?int

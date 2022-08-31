@@ -12,6 +12,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use function Symfony\Component\String\u;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,6 +42,8 @@ class Comment
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank(message: 'comment.blank')]
     #[Assert\Length(min: 5, minMessage: 'comment.too_short', max: 10000, maxMessage: 'comment.too_long')]
+    #[Groups(['post:read'])]
+
     private ?string $content = null;
 
     #[ORM\Column(type: 'datetime')]
@@ -48,6 +51,7 @@ class Comment
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['post:read'])]
     private ?User $author = null;
 
     public function __construct()

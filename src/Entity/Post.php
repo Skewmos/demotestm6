@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -32,7 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ORM\Table(name: 'symfony_demo_post')]
-#[UniqueEntity(fields: ['slug'], errorPath: 'title', message: 'post.slug_unique')]
+#[UniqueEntity(fields: ['slug'], message: 'post.slug_unique', errorPath: 'title')]
 class Post
 {
     #[ORM\Id]
@@ -42,14 +43,17 @@ class Post
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
+    #[Groups(['post:read'])]
     private ?string $title = null;
 
     #[ORM\Column(type: 'string')]
+    #[Groups('post:read')]
     private ?string $slug = null;
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank(message: 'post.blank_summary')]
     #[Assert\Length(max: 255)]
+    #[Groups(['post:read'])]
     private ?string $summary = null;
 
     #[ORM\Column(type: 'text')]
@@ -58,10 +62,12 @@ class Post
     private ?string $content = null;
 
     #[ORM\Column(type: 'datetime')]
+    #[Groups(['post:read'])]
     private \DateTime $publishedAt;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['post:read'])]
     private ?User $author = null;
 
     /**
@@ -69,6 +75,7 @@ class Post
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post', orphanRemoval: true, cascade: ['persist'])]
     #[ORM\OrderBy(['publishedAt' => 'DESC'])]
+    #[Groups(['post:read'])]
     private Collection $comments;
 
     /**
@@ -78,6 +85,7 @@ class Post
     #[ORM\JoinTable(name: 'symfony_demo_post_tag')]
     #[ORM\OrderBy(['name' => 'ASC'])]
     #[Assert\Count(max: 4, maxMessage: 'post.too_many_tags')]
+    #[Groups(['post:read'])]
     private Collection $tags;
 
     public function __construct()
