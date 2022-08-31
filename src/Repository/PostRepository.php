@@ -55,6 +55,22 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return float|int|mixed|string
+     */
+    public function findTheLastData(): mixed
+    {
+        return $this->createQueryBuilder('p')
+            ->addSelect('a', 't')
+            ->innerJoin('p.author', 'a')
+            ->leftJoin('p.tags', 't')
+            ->where('p.publishedAt <= :now')
+            ->orderBy('p.publishedAt', 'DESC')
+            ->setParameter('now', new \DateTime())
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @return Post[]
      */
     public function findBySearchQuery(string $query, int $limit = Paginator::PAGE_SIZE): array

@@ -23,6 +23,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -65,16 +66,20 @@ class BlogController extends AbstractController
     }
 
     #[Route('/api/post', name: 'blog_api_index', methods: ['GET'])]
-    public function jsonPosts(PostRepository $postRepository, SerializerInterface $serializer)
+    public function jsonPosts(PostRepository $postRepository, SerializerInterface $serializer): JsonResponse|Response
     {
-        $posts = $postRepository->findAll();
+        //Recovery of last posts
+        $posts = $postRepository->findTheLastData();
 
-        $json = $serializer->serialize($posts, 'json', ['groups' => 'post:read']);
-        return new Response($json, 200, [
-            'content-type' => "application/json",
-        ]);
-
-
+        //Verification of the number of posts, if greater than 1 we return the data otherwise we return a message
+        if (count($posts) >= 1) {
+            for ($i = 0; $i < 15 ; $i++) {
+                $data[] = $posts[$i];
+            }
+           return $this->json($data, 200,  [], ['groups' => 'post:read']);
+        } else {
+            return new Response('No data found', 200);
+        }
     }
 
     /**
